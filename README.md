@@ -3,5 +3,8 @@
 A new Flutter project.
 
 ## Getting Started
+please install flutter 3.0.5 then
+run following cmd to start
 
-use flutter run to start
+flutter pub get
+flutter run
