@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:invoice_app/invoices_pages/provider/invoices_model.dart';
 import 'package:invoice_app/invoices_pages/provider/provider.dart';
 import 'package:invoice_app/invoices_pages/widgets/widgets.dart';
 import 'package:invoice_app/theme_notifier.dart';
@@ -9,10 +10,13 @@ class InvoicesPagesDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int index = ModalRoute.of(context)!.settings.arguments as int;
-    var state = context.read<InvoicesPagesData>();
+    ThemeNotifier myTheme = context.read<ThemeNotifier>();
 
     return Consumer<InvoicesPagesData>(
       builder: (context, state, child) {
+        if (index >= state.invoices.length) {
+          return Container();
+        }
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: const InvoicesPageAppBar(),
@@ -24,8 +28,10 @@ class InvoicesPagesDetail extends StatelessWidget {
                     // back button
                     // ignore: prefer_const_constructors
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: padding),
-                      child: const InvoicesPageBackButton(),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: myTheme.normalPadding),
+                      // ignore: prefer_const_constructors
+                      child: InvoicesPageBackButton(),
                     ),
                     InvoicesPagesCardWrapper(
                       removeTopMargin: true,
@@ -152,7 +158,7 @@ class InvoicesPagesDetail extends StatelessWidget {
                           ),
                           Container(
                             margin: const EdgeInsets.only(top: 40),
-                            padding: const EdgeInsets.all(padding),
+                            padding: EdgeInsets.all(myTheme.normalPadding),
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(8),
@@ -170,7 +176,7 @@ class InvoicesPagesDetail extends StatelessWidget {
                                                       .length -
                                                   1
                                           ? 0
-                                          : padding),
+                                          : myTheme.normalPadding),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -208,8 +214,10 @@ class InvoicesPagesDetail extends StatelessWidget {
                                         ],
                                       ),
                                       Text(
-                                        parseTotal(state
-                                            .invoices[index].items[i].total),
+                                        parseTotal(
+                                          state.invoices[index].items[i].total,
+                                          showCurrency: true,
+                                        ),
                                         style: context
                                             .read<ThemeNotifier>()
                                             .theme
@@ -228,7 +236,7 @@ class InvoicesPagesDetail extends StatelessWidget {
                                   bottomRight: Radius.circular(8)),
                               color: Theme.of(context).dialogBackgroundColor,
                             ),
-                            padding: const EdgeInsets.all(padding),
+                            padding: EdgeInsets.all(myTheme.normalPadding),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -246,7 +254,9 @@ class InvoicesPagesDetail extends StatelessWidget {
                                       ),
                                 ),
                                 Text(
-                                  parseTotal(state.invoices[index].total),
+                                  parseTotal(
+                                    state.invoices[index].total,
+                                  ),
                                   style: context
                                       .read<ThemeNotifier>()
                                       .theme
@@ -271,8 +281,8 @@ class InvoicesPagesDetail extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: padding,
+                padding: EdgeInsets.symmetric(
+                  horizontal: myTheme.normalPadding,
                   vertical: 22,
                 ),
                 color: Theme.of(context).canvasColor,
@@ -283,8 +293,14 @@ class InvoicesPagesDetail extends StatelessWidget {
                       rightMargin: true,
                       bgColor: Theme.of(context).cardColor,
                       textColor: Theme.of(context).indicatorColor,
-                      onTap: () => Navigator.pushNamed(context, '/edit',
-                          arguments: index),
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        '/edit',
+                        arguments: InvoicesRouteArguments(
+                          index: index,
+                          isCreatingNew: false,
+                        ),
+                      ),
                     ),
                     InvoicesPageButton(
                       text: 'Delete',
@@ -310,7 +326,7 @@ class InvoicesPagesDetail extends StatelessWidget {
                             ),
                             actions: [
                               SizedBox(
-                                width: 94,
+                                width: 94 * myTheme.ratio,
                                 child: InvoicesPageButton(
                                   text: 'Cancel',
                                   bgColor: Theme.of(context).cardColor,
@@ -319,16 +335,17 @@ class InvoicesPagesDetail extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(
-                                width: 94,
+                                width: 94 * myTheme.ratio,
                                 child: InvoicesPageButton(
                                   text: 'Delete',
-                                  textColor: Theme.of(context).indicatorColor,
+                                  textColor: myWhite,
                                   bgColor: const Color.fromRGBO(236, 87, 87, 1),
                                   onTap: () {
+                                    Navigator.popUntil(
+                                        context, ModalRoute.withName('/'));
                                     state.invoices.removeAt(index);
+
                                     state.refresh();
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
                                   },
                                 ),
                               ),

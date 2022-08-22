@@ -21,7 +21,8 @@ class InvoicesPagesPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const InvoicesPageAppBar(),
-      body: const InvoicesPagesView(),
+      // ignore: prefer_const_constructors
+      body: InvoicesPagesView(),
     );
   }
 }
@@ -35,6 +36,7 @@ class InvoicesPagesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const InvoicesPagesBody();
+    // ignore: prefer_const_constructors
+    return InvoicesPagesBody();
   }
 }

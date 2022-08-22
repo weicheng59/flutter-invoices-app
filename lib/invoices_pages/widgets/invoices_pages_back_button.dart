@@ -13,17 +13,20 @@ class InvoicesPageBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double normalPadding = context.read<ThemeNotifier>().normalPadding;
+
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
       },
       child: Padding(
-        padding: EdgeInsets.fromLTRB(0, 32, 0, extraPadding ? 32 : 24),
+        padding:
+            EdgeInsets.fromLTRB(0, 32, 0, extraPadding ? 32 : normalPadding),
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                right: padding,
+              padding: EdgeInsets.only(
+                right: normalPadding,
               ),
               child: SvgPicture.asset(
                 'assets/images/icon-arrow-left.svg',

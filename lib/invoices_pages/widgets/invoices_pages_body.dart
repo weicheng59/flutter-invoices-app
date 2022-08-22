@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:invoice_app/invoices_pages/provider/provider.dart';
 import 'package:invoice_app/invoices_pages/widgets/invoices_pages_header.dart';
 import 'package:invoice_app/invoices_pages/widgets/invoices_pages_status_card.dart';
@@ -18,7 +19,8 @@ class InvoicesPagesBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var state = context.read<InvoicesPagesData>();
+    double normalPadding = context.read<ThemeNotifier>().normalPadding;
+    var myTheme = context.read<ThemeNotifier>();
 
     return Consumer<InvoicesPagesData>(
       builder: (context, state, child) {
@@ -28,85 +30,114 @@ class InvoicesPagesBody extends StatelessWidget {
             // ignore: prefer_const_constructors
             InvoicesHeader(),
             Expanded(
-              child: ListView.builder(
-                itemCount: state.invoices.length,
-                itemBuilder: ((context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                        bottom: index != state.invoices.length - 1 ? 0 : 108.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/detail',
-                            arguments: index);
-                      },
-                      child: Container(
-                        // round corners
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).canvasColor,
+              child: state.invoices.isEmpty
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/illustration-empty.svg',
                         ),
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: padding,
-                          vertical: 8,
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 40, 0, myTheme.normalPadding),
+                          child: Text(
+                            'There is nothing here',
+                            style: myTheme.theme.textTheme.headlineMedium,
+                          ),
                         ),
-                        padding: const EdgeInsets.all(padding),
-                        height: 134,
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                InvoicesPageOrderNumber(index: index),
-                                Text(
-                                  state.invoices[index].clientname,
-                                  style: context
-                                      .read<ThemeNotifier>()
-                                      .theme
-                                      .textTheme
-                                      .bodyMedium!,
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: padding),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                        SizedBox(
+                          width: 210,
+                          child: Text(
+                            'Create an invoice by clicking the New button and get started',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      itemCount: state.invoices.length,
+                      itemBuilder: ((context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: index != state.invoices.length - 1
+                                  ? 0
+                                  : 108.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/detail',
+                                  arguments: index);
+                            },
+                            child: Container(
+                              // round corners
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Theme.of(context).canvasColor,
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                horizontal: normalPadding,
+                                vertical: 8,
+                              ),
+                              padding: EdgeInsets.all(normalPadding),
+                              height: 134,
+                              child: Column(
                                 children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
+                                      InvoicesPageOrderNumber(index: index),
                                       Text(
-                                        'Due  ${convertDate(state.invoices[index].paymentdue)}',
+                                        state.invoices[index].clientname,
                                         style: context
                                             .read<ThemeNotifier>()
                                             .theme
                                             .textTheme
                                             .bodyMedium!,
                                       ),
-                                      Text(
-                                        // add comma to separate thousands
-                                        parseTotal(state.invoices[index].total),
-                                        style: context
-                                            .read<ThemeNotifier>()
-                                            .theme
-                                            .textTheme
-                                            .headlineSmall!,
-                                      )
                                     ],
                                   ),
-                                  InvoicesPagesStatusCard(index: index),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(top: normalPadding),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Due  ${convertDate(state.invoices[index].paymentdue)}',
+                                              style: context
+                                                  .read<ThemeNotifier>()
+                                                  .theme
+                                                  .textTheme
+                                                  .bodyMedium!,
+                                            ),
+                                            Text(
+                                              // add comma to separate thousands
+                                              parseTotal(
+                                                  state.invoices[index].total),
+                                              style: context
+                                                  .read<ThemeNotifier>()
+                                                  .theme
+                                                  .textTheme
+                                                  .headlineSmall!,
+                                            )
+                                          ],
+                                        ),
+                                        InvoicesPagesStatusCard(index: index),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      }),
                     ),
-                  );
-                }),
-              ),
             ),
           ],
         );

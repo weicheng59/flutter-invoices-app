@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
 class ThemeNotifier extends ChangeNotifier {
-  ThemeNotifier() {
-    _themeData = _lightThemeData;
-  }
-
+  double normalPadding = 24.0;
+  double ratio = 1.0;
   late ThemeData _themeData;
+
+  ThemeNotifier(Size screenSize) {
+    _themeData = _lightThemeData;
+    ratio = screenSize.width / 375;
+    normalPadding = ratio * normalPadding;
+  }
 
   final ThemeData _lightThemeData = ThemeData(
     fontFamily: 'Spartan',
@@ -118,7 +122,6 @@ class ThemeNotifier extends ChangeNotifier {
 }
 
 const double opacity = 0.06;
-const double padding = 24.0;
 const double textPadding = 4.0;
 const double textBoldPadding = 12;
 const double textBlockPadding = 30;

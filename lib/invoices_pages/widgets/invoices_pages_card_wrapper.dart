@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:invoice_app/invoices_pages/provider/provider.dart';
 import 'package:invoice_app/theme_notifier.dart';
 
 class InvoicesPagesCardWrapper extends StatelessWidget {
@@ -13,6 +14,8 @@ class InvoicesPagesCardWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double normalPadding = context.read<ThemeNotifier>().normalPadding;
+
     return Container(
       // round corners
       decoration: BoxDecoration(
@@ -20,12 +23,12 @@ class InvoicesPagesCardWrapper extends StatelessWidget {
         color: Theme.of(context).canvasColor,
       ),
       margin: EdgeInsets.fromLTRB(
-        padding,
+        normalPadding,
         removeTopMargin ? 0 : 8,
-        padding,
+        normalPadding,
         8,
       ),
-      padding: const EdgeInsets.all(padding),
+      padding: EdgeInsets.all(normalPadding),
       child: child,
     );
   }

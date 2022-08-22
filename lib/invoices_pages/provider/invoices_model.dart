@@ -182,3 +182,13 @@ class Items {
         'total': total,
       };
 }
+
+class InvoicesRouteArguments {
+  int index;
+  bool isCreatingNew;
+
+  InvoicesRouteArguments({
+    required this.index,
+    required this.isCreatingNew,
+  });
+}

@@ -7,18 +7,21 @@ class InvoicesPageButton extends StatelessWidget {
     Key? key,
     required this.text,
     this.rightMargin = false,
+    this.smallPadding = false,
     this.bgColor = Colors.black,
     this.textColor = Colors.white,
     this.onTap,
   }) : super(key: key);
 
   final String text;
-  final bool rightMargin;
+  final bool rightMargin, smallPadding;
   final Color bgColor, textColor;
   final onTap;
 
   @override
   Widget build(BuildContext context) {
+    double normalPadding = context.read<ThemeNotifier>().normalPadding;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -29,8 +32,8 @@ class InvoicesPageButton extends StatelessWidget {
           ),
           color: bgColor,
         ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: padding,
+        padding: EdgeInsets.symmetric(
+          horizontal: smallPadding ? 16 : normalPadding,
           vertical: 16,
         ),
         margin: EdgeInsets.only(right: rightMargin ? 8 : 0),

@@ -1,4 +1,9 @@
+import 'dart:math';
+
 String convertDate(String date) {
+  if (date.length > 10) {
+    date = date.substring(0, 10);
+  }
   final List<String> dateList = date.split('-');
 
   // convert month to  month abbreviations
@@ -44,7 +49,7 @@ String convertDate(String date) {
 }
 
 // add comma to amount
-String parseTotal(double amount, {bool showCurrency = false}) {
+String parseTotal(double amount, {bool showCurrency = true}) {
   String currencyTag = '';
   if (showCurrency) {
     currencyTag = '\u00a3 ';
@@ -52,4 +57,27 @@ String parseTotal(double amount, {bool showCurrency = false}) {
   return currencyTag +
       amount.toStringAsFixed(2).replaceAllMapped(
           RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+}
+
+const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const _nums = '1234567890';
+Random _rnd = Random();
+
+String getRandomString(int length) {
+  return String.fromCharCodes(
+        Iterable.generate(
+          2,
+          (_) => _chars.codeUnitAt(
+            _rnd.nextInt(_chars.length),
+          ),
+        ),
+      ) +
+      String.fromCharCodes(
+        Iterable.generate(
+          4,
+          (_) => _nums.codeUnitAt(
+            _rnd.nextInt(_nums.length),
+          ),
+        ),
+      );
 }

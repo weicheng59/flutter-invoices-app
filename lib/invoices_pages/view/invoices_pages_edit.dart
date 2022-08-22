@@ -18,14 +18,16 @@ class InvoicesPagesEdit extends StatefulWidget {
 class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
   int index = 0;
   late InvoicesPagesData state;
+  late ThemeNotifier myTheme;
+
   List<Invoice> invoices = [];
 
   @override
   void initState() {
+    myTheme = context.read<ThemeNotifier>();
     state = context.read<InvoicesPagesData>();
     for (var inv in state.invoices) {
-      var a = jsonDecode(inv.toString());
-      invoices.add(Invoice.fromJson(a));
+      invoices.add(Invoice.fromJson(jsonDecode(inv.toString())));
     }
     super.initState();
   }
@@ -33,7 +35,10 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
   @override
   Widget build(BuildContext context) {
     // local copy of invoice
-    index = ModalRoute.of(context)!.settings.arguments as int;
+    var args =
+        ModalRoute.of(context)!.settings.arguments as InvoicesRouteArguments;
+    index = args.index;
+    bool isCreatingNew = args.isCreatingNew;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -43,10 +48,11 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
           Expanded(
             child: Scrollbar(
               child: ListView(
+                padding: EdgeInsets.zero,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: padding,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: myTheme.normalPadding,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,14 +62,21 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                         InvoicesPageBackButton(
                           extraPadding: false,
                         ),
-                        InvoicesPageOrderNumber(
-                          index: index,
-                          prefixText: 'Edit ',
-                          textStyle: Theme.of(context).textTheme.headlineLarge,
-                        ),
+                        isCreatingNew
+                            ? Text(
+                                'New Invoice',
+                                style:
+                                    Theme.of(context).textTheme.headlineLarge,
+                              )
+                            : InvoicesPageOrderNumber(
+                                index: index,
+                                prefixText: 'Edit ',
+                                textStyle:
+                                    Theme.of(context).textTheme.headlineLarge,
+                              ),
                         Padding(
-                          padding:
-                              const EdgeInsets.symmetric(vertical: padding),
+                          padding: EdgeInsets.symmetric(
+                              vertical: myTheme.normalPadding),
                           child: Text(
                             'Bill from',
                             style: Theme.of(context).textTheme.bodyLarge!.merge(
@@ -87,8 +100,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                 }),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: padding),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: myTheme.normalPadding),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -105,7 +118,7 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                         }),
                                       ),
                                     ),
-                                    const SizedBox(width: padding),
+                                    SizedBox(width: myTheme.normalPadding),
                                     Expanded(
                                       child: InvoicesPageTextField(
                                         labelText: 'Post Code',
@@ -137,8 +150,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: padding),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: myTheme.normalPadding),
                                 child: Text(
                                   'Bill to',
                                   style: Theme.of(context)
@@ -161,8 +174,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                 }),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: padding),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: myTheme.normalPadding),
                                 child: InvoicesPageTextField(
                                   labelText: 'Client\'s Email',
                                   controller: TextEditingController(
@@ -183,8 +196,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                 }),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: padding),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: myTheme.normalPadding),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -201,7 +214,7 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                         }),
                                       ),
                                     ),
-                                    const SizedBox(width: padding),
+                                    SizedBox(width: myTheme.normalPadding),
                                     Expanded(
                                       child: InvoicesPageTextField(
                                         labelText: 'Post Code',
@@ -235,7 +248,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
 
                               // date picker
                               Padding(
-                                padding: const EdgeInsets.only(bottom: padding),
+                                padding: EdgeInsets.only(
+                                    bottom: myTheme.normalPadding),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -250,7 +264,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                             .merge(TextStyle(
                                               color: Theme.of(context)
                                                   .selectedRowColor
-                                                  .withOpacity(0.5),
+                                                  .withOpacity(
+                                                      isCreatingNew ? 1 : 0.5),
                                             )),
                                       ),
                                     ),
@@ -261,7 +276,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                         border: Border.all(
                                           color: Theme.of(context)
                                               .selectedRowColor
-                                              .withOpacity(0.5),
+                                              .withOpacity(
+                                                  isCreatingNew ? 1 : 0.5),
                                           width: 1,
                                         ),
                                         borderRadius: BorderRadius.circular(
@@ -287,7 +303,10 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                                         .textTheme
                                                         .bodyLarge!
                                                         .color!
-                                                        .withOpacity(0.5),
+                                                        .withOpacity(
+                                                            isCreatingNew
+                                                                ? 1
+                                                                : 0.5),
                                                   ),
                                                 ),
                                           ),
@@ -303,7 +322,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
 
                               // term picker
                               Padding(
-                                padding: const EdgeInsets.only(bottom: padding),
+                                padding: EdgeInsets.only(
+                                    bottom: myTheme.normalPadding),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -364,7 +384,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                               ),
 
                               Padding(
-                                padding: const EdgeInsets.only(bottom: padding),
+                                padding: EdgeInsets.only(
+                                    bottom: myTheme.normalPadding),
                                 child: Text(
                                   'Item List',
                                   style: Theme.of(context)
@@ -391,8 +412,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                       child: Column(
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: padding),
+                                            padding: EdgeInsets.only(
+                                                bottom: myTheme.normalPadding),
                                             child: InvoicesPageTextField(
                                               labelText: 'Item Name',
                                               controller: TextEditingController(
@@ -423,7 +444,8 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                                   ),
                                                   onChanged: (p0) {
                                                     int? qty = int.tryParse(p0);
-                                                    if (qty != null) {
+                                                    if (qty != null &&
+                                                        qty > 0) {
                                                       setState(() {
                                                         invoices[index]
                                                             .items[i]
@@ -459,9 +481,11 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                                     controller:
                                                         TextEditingController(
                                                       text: parseTotal(
-                                                          invoices[index]
-                                                              .items[i]
-                                                              .price),
+                                                        invoices[index]
+                                                            .items[i]
+                                                            .price,
+                                                        showCurrency: false,
+                                                      ),
                                                     ),
                                                     onChanged: (p0) {
                                                       p0.replaceAll(',', '');
@@ -469,29 +493,31 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                                       double? price =
                                                           double.tryParse(p0);
                                                       if (price != null) {
-                                                        setState(() {
-                                                          invoices[index]
-                                                              .items[i]
-                                                              .price = price;
-                                                          invoices[index]
-                                                              .items[i]
-                                                              .total = invoices[
-                                                                      index]
-                                                                  .items[i]
-                                                                  .quantity *
-                                                              invoices[index]
-                                                                  .items[i]
-                                                                  .price;
-                                                          invoices[index]
-                                                                  .total =
-                                                              invoices[index]
-                                                                  .items
-                                                                  .map((e) =>
-                                                                      e.total)
-                                                                  .reduce((a,
-                                                                          b) =>
-                                                                      a + b);
-                                                        });
+                                                        if (price > 0) {
+                                                          setState(() {
+                                                            invoices[index]
+                                                                .items[i]
+                                                                .price = price;
+                                                            invoices[index]
+                                                                .items[i]
+                                                                .total = invoices[
+                                                                        index]
+                                                                    .items[i]
+                                                                    .quantity *
+                                                                invoices[index]
+                                                                    .items[i]
+                                                                    .price;
+                                                            invoices[index]
+                                                                    .total =
+                                                                invoices[index]
+                                                                    .items
+                                                                    .map((e) =>
+                                                                        e.total)
+                                                                    .reduce((a,
+                                                                            b) =>
+                                                                        a + b);
+                                                          });
+                                                        }
                                                       }
                                                     },
                                                   ),
@@ -502,10 +528,11 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    const Padding(
+                                                    Padding(
                                                       padding: EdgeInsets.only(
-                                                          bottom: padding),
-                                                      child: Text(
+                                                          bottom: myTheme
+                                                              .normalPadding),
+                                                      child: const Text(
                                                         'Total',
                                                       ),
                                                     ),
@@ -551,30 +578,45 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                 ],
                               ),
 
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                    24,
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    invoices[index].items.add(
+                                          Items(
+                                            name: '',
+                                            price: 0,
+                                            quantity: 1,
+                                            total: 0,
+                                          ),
+                                        );
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      24,
+                                    ),
+                                    color: Theme.of(context).cardColor,
                                   ),
-                                  color: Theme.of(context).cardColor,
-                                ),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                margin: const EdgeInsets.only(bottom: padding),
-                                height: 48,
-                                width: double.infinity,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '+ Add New Item',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .merge(
-                                        const TextStyle(
-                                          color:
-                                              Color.fromRGBO(133, 139, 178, 1),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  margin: EdgeInsets.only(
+                                      bottom: myTheme.normalPadding),
+                                  height: 48,
+                                  width: double.infinity,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '+ Add New Item',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .merge(
+                                          const TextStyle(
+                                            color: Color.fromRGBO(
+                                                133, 139, 178, 1),
+                                          ),
                                         ),
-                                      ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -600,35 +642,84 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: padding,
-              vertical: 22,
-            ),
-            color: Theme.of(context).canvasColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InvoicesPageButton(
-                  text: 'Cancel',
-                  rightMargin: true,
-                  bgColor: Theme.of(context).cardColor,
-                  textColor: Theme.of(context).indicatorColor,
-                  onTap: () => Navigator.pop(context),
+          isCreatingNew
+              ? Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: myTheme.normalPadding,
+                    vertical: 22,
+                  ),
+                  color: Theme.of(context).canvasColor,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InvoicesPageButton(
+                        text: 'Discard',
+                        rightMargin: true,
+                        smallPadding: true,
+                        bgColor: Theme.of(context).cardColor,
+                        textColor: Theme.of(context).indicatorColor,
+                        onTap: () {
+                          state.invoices.removeAt(index);
+                          state.refresh();
+                          Navigator.pop(context);
+                        },
+                      ),
+                      InvoicesPageButton(
+                        text: 'Save as Draft',
+                        rightMargin: true,
+                        smallPadding: true,
+                        bgColor: const Color.fromRGBO(55, 59, 83, 1),
+                        textColor: Theme.of(context).indicatorColor,
+                        onTap: () {
+                          state.invoices = invoices;
+                          state.refresh();
+                          Navigator.pop(context);
+                        },
+                      ),
+                      InvoicesPageButton(
+                        text: 'Save & Send',
+                        rightMargin: true,
+                        smallPadding: true,
+                        bgColor: Theme.of(context).primaryColor,
+                        textColor: myWhite,
+                        onTap: () {
+                          state.invoices = invoices;
+                          state.refresh();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              : Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: myTheme.normalPadding,
+                    vertical: 22,
+                  ),
+                  color: Theme.of(context).canvasColor,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InvoicesPageButton(
+                        text: 'Cancel',
+                        rightMargin: true,
+                        bgColor: Theme.of(context).cardColor,
+                        textColor: Theme.of(context).indicatorColor,
+                        onTap: () => Navigator.pop(context),
+                      ),
+                      InvoicesPageButton(
+                        text: 'Save Changes',
+                        bgColor: Theme.of(context).primaryColor,
+                        textColor: myWhite,
+                        onTap: () {
+                          state.invoices = invoices;
+                          state.refresh();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                InvoicesPageButton(
-                  text: 'Save Changes',
-                  bgColor: Theme.of(context).primaryColor,
-                  textColor: myWhite,
-                  onTap: () {
-                    state.invoices = invoices;
-                    state.refresh();
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

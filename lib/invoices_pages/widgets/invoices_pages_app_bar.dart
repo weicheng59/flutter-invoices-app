@@ -57,8 +57,8 @@ class InvoicesPageAppBar extends StatelessWidget
           behavior: HitTestBehavior.opaque,
           onTap: () => context.read<ThemeNotifier>().changeTheme(),
           child: Padding(
-            padding: const EdgeInsets.all(
-              24.0,
+            padding: EdgeInsets.all(
+              context.read<ThemeNotifier>().normalPadding,
             ),
             child: SvgPicture.asset(
               context.read<ThemeNotifier>().isDarkMode
@@ -74,9 +74,9 @@ class InvoicesPageAppBar extends StatelessWidget
           color: Theme.of(context).dividerColor,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             vertical: 20.0,
-            horizontal: 24,
+            horizontal: context.read<ThemeNotifier>().normalPadding,
           ),
           child: ClipOval(
             child: Image.asset(
