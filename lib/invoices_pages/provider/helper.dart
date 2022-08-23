@@ -48,17 +48,6 @@ String convertDate(String date) {
   return '${dateList[2]} ${dateList[1]} ${dateList[0]}';
 }
 
-// add comma to amount
-String parseTotal(double amount, {bool showCurrency = true}) {
-  String currencyTag = '';
-  if (showCurrency) {
-    currencyTag = '\u00a3 ';
-  }
-  return currencyTag +
-      amount.toStringAsFixed(2).replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
-}
-
 const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const _nums = '1234567890';
 Random _rnd = Random();

@@ -117,8 +117,9 @@ class InvoicesPagesBody extends StatelessWidget {
                                             ),
                                             Text(
                                               // add comma to separate thousands
-                                              parseTotal(
-                                                  state.invoices[index].total),
+                                              state.parseTotal(
+                                                state.invoices[index].total,
+                                              ),
                                               style: context
                                                   .read<ThemeNotifier>()
                                                   .theme

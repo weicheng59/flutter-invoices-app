@@ -199,7 +199,10 @@ class InvoicesPagesDetail extends StatelessWidget {
                                             ),
                                           ),
                                           Text(
-                                            '${state.invoices[index].items[i].quantity.toString()} x ${parseTotal(state.invoices[index].items[i].price)}',
+                                            '${state.invoices[index].items[i].quantity.toString()} x ${state.parseTotal(
+                                              state.invoices[index].items[i]
+                                                  .price,
+                                            )}',
                                             style: context
                                                 .read<ThemeNotifier>()
                                                 .theme
@@ -214,9 +217,8 @@ class InvoicesPagesDetail extends StatelessWidget {
                                         ],
                                       ),
                                       Text(
-                                        parseTotal(
+                                        state.parseTotal(
                                           state.invoices[index].items[i].total,
-                                          showCurrency: true,
                                         ),
                                         style: context
                                             .read<ThemeNotifier>()
@@ -254,7 +256,7 @@ class InvoicesPagesDetail extends StatelessWidget {
                                       ),
                                 ),
                                 Text(
-                                  parseTotal(
+                                  state.parseTotal(
                                     state.invoices[index].total,
                                   ),
                                   style: context

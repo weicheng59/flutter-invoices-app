@@ -480,7 +480,7 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                                     labelText: 'Price',
                                                     controller:
                                                         TextEditingController(
-                                                      text: parseTotal(
+                                                      text: state.parseTotal(
                                                         invoices[index]
                                                             .items[i]
                                                             .price,
@@ -542,7 +542,7 @@ class _InvoicesPagesEditState extends State<InvoicesPagesEdit> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          parseTotal(
+                                                          state.parseTotal(
                                                               invoices[index]
                                                                   .items[i]
                                                                   .total,

@@ -13,7 +13,8 @@ class InvoicesHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double normalPadding = context.read<ThemeNotifier>().normalPadding;
-    int invoiceCount = context.watch<InvoicesPagesData>().invoices.length;
+    InvoicesPagesData state = context.read<InvoicesPagesData>();
+    int invoiceCount = state.invoices.length;
 
     return Padding(
       padding: EdgeInsets.all(normalPadding),
@@ -40,6 +41,38 @@ class InvoicesHeader extends StatelessWidget {
           ),
           const Expanded(
             child: SizedBox(),
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: normalPadding / 2),
+            child: DropdownButton<String>(
+              value: state.currencies[state.currencyFlag],
+              icon: Padding(
+                padding: EdgeInsets.only(left: normalPadding / 3),
+                child: SvgPicture.asset(
+                  'assets/images/icon-arrow-down.svg',
+                ),
+              ),
+              style: const TextStyle(color: Colors.deepPurple),
+              underline: Container(),
+              onChanged: (String? newValue) async {
+                if (newValue != null) {
+                  int indexOfNewValue = state.currencies.indexOf(newValue);
+                  if (state.currencyFlag != indexOfNewValue) {
+                    state.currencyFlag = indexOfNewValue;
+                    await state.updateCurrencyConverRatio();
+                    state.refresh();
+                  }
+                }
+              },
+              items: state.currencies.map<DropdownMenuItem<String>>(
+                (String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                },
+              ).toList(),
+            ),
           ),
           Text(
             'Filter',
